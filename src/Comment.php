@@ -6,22 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 use Laravelista\Comments\Events\CommentCreated;
 use Laravelista\Comments\Events\CommentUpdated;
 use Laravelista\Comments\Events\CommentDeleted;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Config;
 
 class Comment extends Model
 {
+	use SoftDeletes;
+
     /**
      * The relations to eager load on every query.
      *
      * @var array
      */
-    protected $with = ['commenter'];
+    protected $with = [
+        'commenter'
+    ];
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['comment', 'approved', 'guest_name', 'guest_email'];
+    protected $fillable = [
+        'comment', 'approved', 'guest_name', 'guest_email'
+    ];
 
     /**
      * The attributes that should be cast to native types.
@@ -64,7 +72,7 @@ class Comment extends Model
      */
     public function children()
     {
-        return $this->hasMany(config('comments.model'), 'child_id');
+        return $this->hasMany(Config::get('comments.model'), 'child_id');
     }
 
     /**
@@ -72,6 +80,6 @@ class Comment extends Model
      */
     public function parent()
     {
-        return $this->belongsTo(config('comments.model'), 'child_id');
+        return $this->belongsTo(Config::get('comments.model'), 'child_id');
     }
 }
