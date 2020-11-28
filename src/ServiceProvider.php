@@ -2,6 +2,7 @@
 
 namespace Laravelista\Comments;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
@@ -20,6 +21,18 @@ class ServiceProvider extends LaravelServiceProvider
     {
         if (Config::get('comments.routes') === true) {
             $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        }
+    }
+
+    /**
+     * If load_migrations config is true (by default it is),
+     * then load the package migrations, otherwise don't load
+     * the migrations.
+     */
+    protected function loadMigrations()
+    {
+        if (Config::get('comments.load_migrations') === true) {
+            $this->loadMigrationsFrom(__DIR__ . '/../migrations');
         }
     }
 
@@ -45,9 +58,11 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->loadRoutes();
 
-        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+        $this->loadMigrations();
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'comments');
+
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'comments');
 
         $this->includeBladeComponent();
 
@@ -65,7 +80,13 @@ class ServiceProvider extends LaravelServiceProvider
             __DIR__ . '/../config/comments.php' => App::configPath('comments.php'),
         ], 'config');
 
+        $this->publishes([
+            __DIR__ . '/../resources/lang' => App::resourcePath('lang/vendor/comments'),
+        ], 'translations');
+
         Route::model('comment', Config::get('comments.model'));
+
+        Paginator::useBootstrap();
     }
 
     public function register()

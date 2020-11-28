@@ -14,23 +14,25 @@ All comments are stored in a single table with a polymorphic relation for conten
 
 ### Features
 
-- [x] View comments
-- [x] Create comments
-- [x] Delete comments
-- [x] Edit comments
-- [x] **Reply to comments**
-- [x] **Authorization rules**
-- [x] **Support localization**
-- [x] **Dispatch events**
-- [x] **Route, Controller, Comment, Migration & View customizations**
-- [x] **Support for non-integer IDs**
-- [x] **Support for multiple User models**
-- [x] **Solved N+1 query problem**
-- [x] **Comment approval (opt-in)**
-- [x] **Guest commenting (opt-in)**
-- [x] **Pagination (opt-in)**
-- [x] **Soft deletes (opt-in)**
-- [x] **Works with custom ID columns** [New]
+- View comments
+- Create comments
+- Delete comments
+- Edit comments
+- Reply to comments
+- Authorization rules
+- Support localization
+- Dispatch events
+- Route, Controller, Comment, Migration & View customizations
+- Support for non-integer IDs
+- Support for multiple User models
+- Solved N+1 query problem
+- Comment approval (opt-in)
+- Guest commenting (opt-in)
+- Pagination (opt-in)
+- Soft deletes (opt-in)
+- Works with custom ID columns
+- Optionally load package migrations [NEW]
+- Configure maximum indentation level [NEW]
 
 
 ### Screenshots
@@ -140,6 +142,15 @@ php artisan vendor:publish --provider="Laravelista\Comments\ServiceProvider" --t
 ```
 
 
+### Publish translations (customization)
+
+The package currently only supports English, but I am open to PRs for other languages.
+
+```bash
+php artisan vendor:publish --provider="Laravelista\Comments\ServiceProvider" --tag=translations
+```
+
+
 ## Usage
 
 In the view where you want to display comments, place this code and modify it:
@@ -181,6 +192,26 @@ To use pagination, use this code:
 ```
 
 Replace `2` with any number you want.
+
+### Configure maximum indentation level
+
+By default the replies go up to level three. After that they are "mashed" at that level.
+
+```
+- 0
+    - 1
+        - 2
+            - 3
+```
+
+You can configure the maximum indentation level like so:
+
+```
+@comments([
+    'model' => $user,
+    'maxIndentationLevel' => 1
+])
+```
 
 
 ## Events
